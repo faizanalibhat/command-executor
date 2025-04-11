@@ -3,6 +3,20 @@ FROM node:18-alpine
 # Install PM2 globally
 RUN npm install pm2 -g
 
+RUN apk add --no-cache python3 make g++ curl
+
+# Install Go (required for nuclei)
+RUN apk add --no-cache go git
+
+# Install nuclei
+RUN go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest && \
+    ln -s /root/go/bin/nuclei /usr/local/bin/nuclei
+
+# Install subfinder instead of nuclei
+RUN go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest && \
+    ln -s /root/go/bin/subfinder /usr/local/bin/subfinder
+
+
 # Install Puppeteer dependencies
 RUN apk update && apk add --no-cache \
     chromium \
