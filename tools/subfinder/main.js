@@ -83,11 +83,11 @@ class WorkerPool {
 // Optimized subdomain resolver with timeout and caching
 async function resolveSubdomains(domain) {
     return new Promise((resolve, reject) => {
-        const outputPath = path.resolve(`/root/CeAPI/tools/${domain}_subdomains`);
+        const outputPath = path.resolve(`${process.env.TOOLS_DIR}/${domain}_subdomains`);
         const args = ['-d', domain, '-o', outputPath, '-t', CPU_COUNT, '-silent'];
         
         const childProcess = spawn('subfinder', args, { 
-            cwd: "/root/CeAPI/tools/",
+            cwd: process.env.TOOLS_DIR,
             timeout: SUBFINDER_TIMEOUT 
         });
 
