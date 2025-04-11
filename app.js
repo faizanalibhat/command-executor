@@ -34,6 +34,7 @@ mongoose.connect(process.env.CMDEXEC_MONGODB_URL)
     console.log("[-] FAILED TO CONNECT MONGODB : ", error);
 });
 
+
 app.listen(PORT, () => {
   console.log("[+] COMMAND EXECUTOR IS RUNNING ON PORT : " + PORT);
 });
