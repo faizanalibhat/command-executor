@@ -1,0 +1,5 @@
+2025/01/21-20:15:03.529 cf0c Recovering log #19
+2025/01/21-20:15:03.529 cf0c Level-0 table #21: started
+2025/01/21-20:15:03.532 cf0c Level-0 table #21: 217 bytes OK
+2025/01/21-20:15:03.538 cf0c Delete type=3 #17
+2025/01/21-20:15:03.538 cf0c Delete type=0 #19

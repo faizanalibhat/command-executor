@@ -1,0 +1,71 @@
+
+const parseTlsscan = (commandResponse) => {
+    let tlsscanInfo = [];
+
+	console.log("here is what i get: ", commandResponse);
+
+    try {
+        let parsedInfo = JSON.parse(commandResponse.output);
+
+        if (parsedInfo) {
+            tlsscanInfo.push({
+		id: commandResponse.id,
+                status: "success",
+                commandType: "tlsscan",
+                domain: commandResponse.domain,
+                subdomain: commandResponse.subdomain,
+                orgId: commandResponse.orgId,
+                scanType: commandResponse.scanType,
+                scanId: commandResponse.scanId,
+                certificateChain: parsedInfo.certificateChain ?? "",
+                cipher: parsedInfo.cipher ?? "",
+                compression: parsedInfo.compression ?? "",
+                elapsedTime: parsedInfo.elapsedTime ?? "",
+                expansion: parsedInfo.expansion ?? "",
+                host: parsedInfo.host ?? "",
+                ip: parsedInfo.ip ?? "",
+                ocspStapled: parsedInfo.ocspStapled ?? "",
+                port: parsedInfo.port ?? "",
+                secureRenego: parsedInfo.secureRenego ?? "",
+                sni: parsedInfo.sni ?? "",
+                tempPublicKeyAlg: parsedInfo.tempPublicKeyAlg ?? "",
+                tempPublicKeySize: parsedInfo.tempPublicKeySize ?? "",
+                tlsVersion: parsedInfo.tlsVersion ?? "",
+                verifyCertResult: parsedInfo.verifyCertResult ?? "",
+                verifyHostResult: parsedInfo.verifyHostResult ?? "",
+                type: parsedInfo.x509ChainDepth ?? ""
+            });
+        }
+        else {
+            tlsscanInfo.push({
+		id: commandResponse.id,
+                status: "failed",
+                commandType: "tlsscan",
+                domain: commandResponse.domain,
+                subdomain: commandResponse.subdomain,
+                orgId: commandResponse.orgId,
+                scanType: commandResponse.scanType,
+                scanId: commandResponse.scanId,
+                remarks: "no data in tlsscan!"
+            });
+        }
+    }
+    catch(error) {
+        tlsscanInfo.push({
+	    id: commandResponse.id,
+            status: "failed",
+            commandType: "tlsscan",
+            domain: commandResponse.domain,
+            subdomain: commandResponse.subdomain,
+            orgId: commandResponse.orgId,
+            scanType: commandResponse.scanType,
+            scanId: commandResponse.scanId,
+            remarks: "no data in tlsscan!"
+        });
+    }
+
+    return tlsscanInfo;
+}
+
+
+module.exports = parseTlsscan;
