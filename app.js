@@ -10,7 +10,7 @@ const timeoutId = setTimeout(() => {
 }, 1000*60*5);
 
 
-const PORT = process.env.PORT || 80;
+const PORT = process.env.CMDEXEC_PORT || 80;
 
 const app = express();
 
@@ -44,7 +44,7 @@ app.use("*", (req, res) => {
 app.use(errorHandler);
 
 
-mongoose.connect(process.env.MONGODB_URL)
+mongoose.connect(process.env.CMDEXEC_MONGODB_URL)
 .then(() => {
     console.log("MONGODB CONNECTED");
 })
