@@ -4,29 +4,11 @@ const bodyParser = require("body-parser");
 const errorHandler = require("./middlewares/errorHandler");
 const routes = require("./routes/index");
 
-const timeoutId = setTimeout(() => {
-  console.log("EXITING - NO COMMANDS RECIEVED.");
-  process.exit(0);
-}, 1000*60*5);
-
-
 const PORT = process.env.CMDEXEC_PORT || 80;
 
 const app = express();
 
 app.use(bodyParser.json({ limit: '50mb'}));
-
-
-// check for request on /urls
-app.use(async (req, res, next) => {
-    const path = req.path;
-    console.log("[+] REQUST ON : " + path);
-    if (path == "/commands") {
-      // clear the timeout
-      clearTimeout(timeoutId);
-    }
-    return next();
-});
 
 app.use("/", routes);
 
