@@ -16,7 +16,6 @@ RUN go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest && \
 RUN go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest && \
     ln -s /root/go/bin/subfinder /usr/local/bin/subfinder
 
-
 # Install Puppeteer dependencies
 RUN apk update && apk add --no-cache \
     chromium \
@@ -33,6 +32,8 @@ RUN apk update && apk add --no-cache \
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
+# Add additional Chrome flags to environment - modified for root user
+ENV PUPPETEER_ARGS="--no-sandbox --disable-dev-shm-usage --disable-gpu --disable-software-rasterizer --disable-setuid-sandbox --single-process"
 
 # Create app directory
 WORKDIR /app
@@ -53,21 +54,13 @@ COPY . .
 RUN mkdir -p keys \
     && mkdir -p /tmp/chrome-user-data
 
-# Add user for running Chrome and set permissions
+# Create pptruser but we won't switch to it
 RUN addgroup -S pptruser && adduser -S -G pptruser pptruser \
-    && mkdir -p /home/pptruser/Downloads /app \
-    && chown -R pptruser:pptruser /home/pptruser \
-    && chown -R pptruser:pptruser /app \
-    && chown -R pptruser:pptruser /tmp/chrome-user-data
-
-# Add additional Chrome flags to environment
-ENV PUPPETEER_ARGS="--no-sandbox --disable-dev-shm-usage --disable-gpu --disable-software-rasterizer --disable-setuid-sandbox --single-process"
-
-# Run as non-root user
-USER pptruser
+    && mkdir -p /home/pptruser/Downloads \
+    && chown -R pptruser:pptruser /home/pptruser
 
 # Create a directory for keys
 RUN mkdir -p keys
 
-# Start command
+# Start command - running as root
 CMD ["pm2-runtime", "ecosystem.config.js"]
