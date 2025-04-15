@@ -12,6 +12,10 @@ RUN apk add --no-cache go git
 RUN go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest && \
     ln -s /root/go/bin/nuclei /usr/local/bin/nuclei
 
+
+# Install nmap
+RUN apk add --no-cache nmap
+
 # Install subfinder instead of nuclei
 RUN go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest && \
     ln -s /root/go/bin/subfinder /usr/local/bin/subfinder
