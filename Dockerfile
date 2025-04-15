@@ -39,6 +39,11 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 # Add additional Chrome flags to environment - modified for root user
 ENV PUPPETEER_ARGS="--no-sandbox --disable-dev-shm-usage --disable-gpu --disable-software-rasterizer --disable-setuid-sandbox --disable-singleton-lock"
 
+# Configure technology-detector-node environment variables
+ENV CHROMIUM_BIN=/usr/bin/chromium-browser \
+    CHROMIUM_DATA_DIR=/tmp/chrome-user-data \
+    CHROMIUM_ARGS="--headless --no-sandbox --disable-dev-shm-usage --disable-gpu --disable-software-rasterizer --disable-setuid-sandbox --disable-singleton-lock"
+
 # Create app directory
 WORKDIR /app
 
@@ -58,6 +63,10 @@ COPY . .
 RUN mkdir -p keys \
     && mkdir -p /tmp/chrome-user-data
 
+# Create and set permissions for Chrome user data directory
+RUN mkdir -p /tmp/chrome-user-data && \
+    chmod 777 /tmp/chrome-user-data
+
 # Create pptruser but we won't switch to it
 RUN addgroup -S pptruser && adduser -S -G pptruser pptruser \
     && mkdir -p /home/pptruser/Downloads \
@@ -65,7 +74,6 @@ RUN addgroup -S pptruser && adduser -S -G pptruser pptruser \
 
 # Create a directory for keys
 RUN mkdir -p keys
-
 
 # Start command - running as root
 CMD ["pm2-runtime", "ecosystem.config.js"]
