@@ -37,7 +37,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 # Add additional Chrome flags to environment - modified for root user
-ENV PUPPETEER_ARGS="--no-sandbox --disable-dev-shm-usage --disable-gpu --disable-software-rasterizer --disable-setuid-sandbox --single-process"
+ENV PUPPETEER_ARGS="--no-sandbox --disable-dev-shm-usage --disable-gpu --disable-software-rasterizer --disable-setuid-sandbox --disable-singleton-lock"
 
 # Create app directory
 WORKDIR /app
@@ -65,6 +65,12 @@ RUN addgroup -S pptruser && adduser -S -G pptruser pptruser \
 
 # Create a directory for keys
 RUN mkdir -p keys
+
+# Add this to your Dockerfile
+RUN echo "#!/bin/sh\nrm -rf /tmp/chrome-user-data/*\nexec \"\$@\"" > /entrypoint.sh && \
+    chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
 
 # Start command - running as root
 CMD ["pm2-runtime", "ecosystem.config.js"]
