@@ -5,7 +5,17 @@ async function main(domain) {
 
     try {
         await detector.init();
-        const site = await detector.open("https://" + domain);
+
+        let url;
+
+        if (domain.startsWith("http://") || domain.startsWith("https://")) {
+          url = domain;
+        }
+        else {
+          url = "https://" + domain;
+        }
+
+        const site = await detector.open(url);
         const results = await site.analyze();
 
         return {
