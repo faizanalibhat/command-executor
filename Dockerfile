@@ -15,6 +15,7 @@ RUN go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest && \
 
 # Install nmap
 RUN apk add --no-cache nmap
+RUN apk add nmap-scripts
 
 # Install subfinder instead of nuclei
 RUN go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest && \
