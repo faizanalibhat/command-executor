@@ -18,8 +18,13 @@ async function main(domain) {
       };
     } finally {
       const fs = require('fs');
-      fs.unlinkSync('/tmp/chrome-user-data/SingletonLock');
-      fs.unlinkSync('/app/tmp/chromium/SingletonLock');
+
+      try {
+        fs.unlinkSync('/tmp/chrome-user-data/SingletonLock');
+        fs.unlinkSync('/app/tmp/chromium/SingletonLock');
+      }
+      catch(err) {}
+
       await detector.destroy();
     }
 }
