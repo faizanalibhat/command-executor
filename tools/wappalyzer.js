@@ -17,6 +17,9 @@ async function main(domain) {
         tech: []
       };
     } finally {
+      const fs = require('fs');
+      fs.unlinkSync('/tmp/chrome-user-data/SingletonLock');
+      fs.unlinkSync('/app/tmp/chromium/SingletonLock');
       await detector.destroy();
     }
 }
