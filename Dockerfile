@@ -66,11 +66,6 @@ RUN addgroup -S pptruser && adduser -S -G pptruser pptruser \
 # Create a directory for keys
 RUN mkdir -p keys
 
-# Add this to your Dockerfile
-RUN echo "#!/bin/sh\nrm -rf /tmp/chrome-user-data/*\nexec \"\$@\"" > /entrypoint.sh && \
-    chmod +x /entrypoint.sh
-
-ENTRYPOINT ["/entrypoint.sh"]
 
 # Start command - running as root
 CMD ["pm2-runtime", "ecosystem.config.js"]
