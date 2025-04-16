@@ -18,7 +18,8 @@ const checkWebService = (host, port) =>
             target: `${protocol === https ? 'https' : 'http'}://${host}:${port}`,
             statusCode: res.statusCode,
             title: titleMatch ? titleMatch[1] : 'N/A',
-            headers: res.headers
+            headers: res.headers,
+            group: ["web_servers"]
           });
         });
     }).on('error', () => resolve(null));

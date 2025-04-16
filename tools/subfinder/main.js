@@ -117,16 +117,16 @@ async function resolveSubdomains(domain) {
 
 function decideStatusAndGroup(dnsrecord) {
     if (!dnsrecord?.dns_records?.length) {
-        return { status: "dead" };
+        return { status: "dead", group: ["allLive"] };
     }
 
     if (dnsrecord.ip_addresses?.length || dnsrecord.dns_records?.some(record => record.record_type === "CNAME")) {
         console.log("[+] FOUND WEB SERVER");
-        return { status: "up", group: "web_servers" };
+        return { status: "up", group: ["web_servers", "allLive"] };
     }
 
     console.log("[+] FOUND LIVE SUBDOMAIN");
-    return { status: "up", group: "allLive" };
+    return { status: "up", group: ["allLive"] };
 }
 
 // Function to check if a web service is running on a specific host and port
@@ -157,7 +157,7 @@ async function checkWebService(host, port) {
                     title: titleMatch ? titleMatch[1] : 'N/A',
                     headers: res.headers,
                     status: "up",
-                    group: "web_servers"
+                    group: ["web_servers"]
                 });
             });
         });
