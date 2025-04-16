@@ -30,6 +30,8 @@ async function processResult(result) {
 
 async function executeCommand(commandObj) {
     try {
+        console.log("[+] EXECUTING ", commandObj.command);
+
         const result = await workerPool.runTask(commandObj);
         await processResult(result);
 

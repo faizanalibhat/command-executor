@@ -12,8 +12,6 @@ async function processBatch(commands, batchSize) {
 }
 
 async function fetchCommands(commands) {
-	console.log("commands: ", commands);
-
     try {
         if (!Array.isArray(commands) || commands.length === 0) {
             throw new Error("No Commands Received! Killing the instance.");

@@ -87,8 +87,6 @@ async function handleGenericCommand(commandObj) {
             .map(arg => arg.replace(/^['"]|['"]$/g, ''));
         const outputFile = cmd.length > 1 ? cmd[1].trim() : null;
 
-        console.log("[+] EXECUTING " + actualCommand);
-
         const child = spawn(actualCommand[0], actualCommand.slice(1), {
             cwd: process.env.TOOLS_DIR,
             env: { ...process.env, PYTHONUNBUFFERED: '1' },
