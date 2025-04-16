@@ -120,11 +120,12 @@ function decideStatusAndGroup(dnsrecord) {
         return { status: "dead" };
     }
 
-    if (dnsrecord.ip_addresses?.length || 
-        dnsrecord.dns_records?.some(record => record.record_type === "CNAME")) {
+    if (dnsrecord.ip_addresses?.length || dnsrecord.dns_records?.some(record => record.record_type === "CNAME")) {
+        console.log("[+] FOUND WEB SERVER");
         return { status: "up", group: "web_servers" };
     }
 
+    console.log("[+] FOUND LIVE SUBDOMAIN");
     return { status: "up", group: "allLive" };
 }
 
