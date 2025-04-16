@@ -102,11 +102,7 @@ async function handleGenericCommand(commandObj) {
         const timeoutId = setTimeout(() => child.kill('SIGTERM'), 180000);
 
         child.on('close', async (code) => {
-            console.log("[+] EXECUTIOON FINISHED WITH CODE ", code);
-            console.log("[+] OUTPUT: ", output);
-            console.log("[-] STDERR: ", errorData);
             clearTimeout(timeoutId);
-
             try {
                 if (output && outputFile) {
                     await fs.writeFile(
