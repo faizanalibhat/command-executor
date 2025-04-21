@@ -2,12 +2,27 @@
 const parseNmap = (commandResponse) => {
     const parsedInfo = [];
 
-
     const pattern = /(\d+\/\w+)\s+(\w+)\s+(.*)/g;
 
     const allMatches = commandResponse.output.matchAll(pattern);
 
-    console.log("from command: ", commandResponse);
+    if (!commandResponse.output || allMatches.length == 0) {
+        parsedInfo.push({
+            commandId: commandResponse.id,
+            domain: commandResponse.domain,
+            subdomain: commandResponse.subdomain,
+            orgId: commandResponse.orgId,
+            scanType: commandResponse.scanType,
+            scanId: commandResponse.scanId,
+            status: "failed",
+            commandType: "nmap",
+            remarks: "No Nmap info fetched!"
+        });
+
+        console.log("nmap result: ", parsedInfo);
+
+        return parsedInfo;
+    }
 
     for (let match of allMatches) {
         parsedInfo.push({
@@ -26,21 +41,7 @@ const parseNmap = (commandResponse) => {
         });
     }
 
-    if (!commandResponse.output || allMatches.length == 0) {
-        parsedInfo.push({
-            commandId: commandResponse.id,
-            domain: commandResponse.domain,
-            subdomain: commandResponse.subdomain,
-            orgId: commandResponse.orgId,
-            scanType: commandResponse.scanType,
-            scanId: commandResponse.scanId,
-            status: "failed",
-            commandType: "nmap",
-            remarks: "No Nmap info fetched!"
-        });
-
-        return parsedInfo;
-    }
+    console.log("nmap result: ", parsedInfo);
 
     return parsedInfo;
 }
