@@ -247,7 +247,7 @@ async function main(domain) {
         // Find active domains for additional scanning
         const activeDomains = subdomainObjects
             .filter(domain => domain.status === "up" && 
-                             (domain.group === "web_servers" || domain.group === "allLive"))
+                             (domain.group.includes("web_servers") || domain.group.includes("allLive")))
             .map(domain => domain.host);
 
         console.log(`[+] Found ${activeDomains.length} active domains for web service scanning`);
