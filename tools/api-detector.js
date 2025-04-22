@@ -123,6 +123,9 @@ class APIDetector {
 
             // Wait for all workers to complete
             const results = await Promise.all(workerPromises);
+
+            console.log("apis detected: ", results);
+
             return results.flat();
         } catch (error) {
             console.error('Error in detectAPIs:', error);
