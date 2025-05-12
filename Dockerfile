@@ -5,8 +5,16 @@ RUN npm install pm2 -g
 
 RUN apk add --no-cache python3 make g++ curl
 
-# Install Go (required for nuclei)
-RUN apk add --no-cache go git
+# Install Go manually (v1.24.4 as of now)
+ENV GOLANG_VERSION=1.24.4
+
+RUN apk add --no-cache curl git && \
+    curl -LO https://go.dev/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz && \
+    rm -rf /usr/local/go && \
+    tar -C /usr/local -xzf go${GOLANG_VERSION}.linux-amd64.tar.gz && \
+    rm go${GOLANG_VERSION}.linux-amd64.tar.gz
+
+ENV PATH="/usr/local/go/bin:$PATH"
 
 # Install nuclei
 RUN go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest && \
