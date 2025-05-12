@@ -1,88 +1,89 @@
 FROM node:18-bullseye
 
 # Install PM2 globally
-RUN npm install pm2 -g
+RUN npm install -g pm2
 
-RUN apk add --no-cache python3 make g++ curl
+# Install build dependencies and core tools
+RUN apt-get update && \
+    apt-get install -y \
+        python3 \
+        make \
+        g++ \
+        curl \
+        git \
+        nmap \
+        wget \
+        gnupg \
+        ca-certificates \
+        fonts-freefont-ttf \
+        libnss3 \
+        libatk-bridge2.0-0 \
+        libatk1.0-0 \
+        libcups2 \
+        libdrm2 \
+        libxkbcommon0 \
+        libxcomposite1 \
+        libxdamage1 \
+        libxrandr2 \
+        libgbm1 \
+        libasound2 \
+        libxshmfence1 \
+        xdg-utils \
+        libpangocairo-1.0-0 \
+        libpangoft2-1.0-0 \
+        libharfbuzz0b \
+        libfreetype6 \
+        libappindicator3-1 \
+        libx11-xcb1 \
+        libxss1 \
+        chromium \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Go manually (v1.24.4 as of now)
 ENV GOLANG_VERSION=1.24.4
 
-RUN apk add --no-cache curl git && \
-    curl -LO https://go.dev/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz && \
+RUN curl -LO https://go.dev/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz && \
     rm -rf /usr/local/go && \
     tar -C /usr/local -xzf go${GOLANG_VERSION}.linux-amd64.tar.gz && \
     rm go${GOLANG_VERSION}.linux-amd64.tar.gz
 
 ENV PATH="/usr/local/go/bin:$PATH"
 
-# Install nuclei
+# Install nuclei and subfinder
 RUN go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest && \
-    ln -s /root/go/bin/nuclei /usr/local/bin/nuclei
-
-
-# Install nmap
-RUN apk add --no-cache nmap
-RUN apk add nmap-scripts
-
-# Install subfinder instead of nuclei
-RUN go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest && \
+    go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest && \
+    ln -s /root/go/bin/nuclei /usr/local/bin/nuclei && \
     ln -s /root/go/bin/subfinder /usr/local/bin/subfinder
 
-# Install Puppeteer dependencies
-RUN apk update && apk add --no-cache \
-    chromium \
-    nss \
-    freetype \
-    freetype-dev \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont \
-    nodejs \
-    yarn
-
-# Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
+# Puppeteer config
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
-
-# Add additional Chrome flags to environment - modified for root user
-ENV PUPPETEER_ARGS="--no-sandbox --disable-dev-shm-usage --disable-gpu --disable-software-rasterizer --disable-setuid-sandbox --disable-singleton-lock"
-
-# Configure technology-detector-node environment variables
-ENV CHROMIUM_BIN=/usr/bin/chromium-browser \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium \
+    PUPPETEER_ARGS="--no-sandbox --disable-dev-shm-usage --disable-gpu --disable-software-rasterizer --disable-setuid-sandbox --disable-singleton-lock" \
+    CHROMIUM_BIN=/usr/bin/chromium \
     CHROMIUM_DATA_DIR=/tmp/chrome-user-data \
     CHROMIUM_ARGS="--headless --no-sandbox --disable-dev-shm-usage --disable-gpu --disable-software-rasterizer --disable-setuid-sandbox --disable-singleton-lock"
 
 # Create app directory
 WORKDIR /app
 
-# Copy ecosystem file first (explicit)
+# Copy necessary files first for better Docker caching
 COPY ecosystem.config.js .
-
-# Copy package files
 COPY package*.json ./
 
-# Install dependencies
+# Install Node dependencies
 RUN npm install
 
-# Now copy everything else
+# Copy remaining app files
 COPY . .
 
-# Create a directory for keys and chrome user data
-RUN mkdir -p keys \
-    && mkdir -p /tmp/chrome-user-data
+# Prepare directories
+RUN mkdir -p keys /tmp/chrome-user-data && \
+    chmod 777 /tmp/chrome-user-data && \
+    addgroup --system pptruser && \
+    adduser --system --ingroup pptruser pptruser && \
+    mkdir -p /home/pptruser/Downloads && \
+    chown -R pptruser:pptruser /home/pptruser
 
-# Create and set permissions for Chrome user data directory
-RUN mkdir -p /tmp/chrome-user-data && \
-    chmod 777 /tmp/chrome-user-data
-
-# Create pptruser but we won't switch to it
-RUN addgroup -S pptruser && adduser -S -G pptruser pptruser \
-    && mkdir -p /home/pptruser/Downloads \
-    && chown -R pptruser:pptruser /home/pptruser
-
-# Create a directory for keys
-RUN mkdir -p keys
-
-# Start command - running as root
+# Start command
 CMD ["pm2-runtime", "ecosystem.config.js"]
