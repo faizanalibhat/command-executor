@@ -20,10 +20,12 @@ const store = async (data) => {
 
 const get = async () => {
     try {
-        const commandTypes = ['subfinder', 'dig', 'api', 'httpx', 'tlsscan', 'nmap', 'ip_info'];
+        const commandTypes = ['subfinder', 'dig', 'api', 'nmap', 'httpx', 'tlsscan', 'ip_info'];
         const response = {};
 
         for (const commandType of commandTypes) {
+            console.log("[+] READING FROM RESULTS FOR COMMAND : ", commandType);
+
              let data = await Result.find({ commandType }).lean();
 
             if (data.length) {

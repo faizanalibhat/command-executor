@@ -31,8 +31,6 @@ const getParsedOutput = async (command, data = null) => {
         // Check if the file exists and can be read.
         await fs.access(filePath, fs.constants.R_OK | fs.constants.W_OK);
 
-        console.log("[+] PASS ACCESS CHECK");
-
         // Use a Promise to handle the asynchronous read stream
         output = await new Promise((resolve, reject) => {
             const readStream = createReadStream(filePath);
@@ -48,13 +46,13 @@ const getParsedOutput = async (command, data = null) => {
                     resolve(result);
                 }
                 catch(error) {
-                    console.log(error);
+                    // console.log(error);
                     resolve(result);
                 }
             });
 
             readStream.on("error", (err) => {
-                console.log(err);
+                // console.log(err);
                 reject(err);
             });
         });
