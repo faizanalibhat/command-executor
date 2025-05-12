@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:18-bullseye
 
 # Install PM2 globally
 RUN npm install pm2 -g
