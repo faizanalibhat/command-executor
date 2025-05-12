@@ -40,8 +40,8 @@ RUN apt-get update && \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Go manually (v1.24.4 as of now)
-ENV GOLANG_VERSION=1.24.4
+# Install Go manually (v1.24.3 as of now)
+ENV GOLANG_VERSION=1.24.3
 
 RUN curl -LO https://go.dev/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz && \
     rm -rf /usr/local/go && \
