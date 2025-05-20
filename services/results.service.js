@@ -24,8 +24,6 @@ const get = async () => {
         const response = {};
 
         for (const commandType of commandTypes) {
-            console.log("[+] READING FROM RESULTS FOR COMMAND : ", commandType);
-
              let data = await Result.find({ commandType }).lean();
 
             if (data.length) {
